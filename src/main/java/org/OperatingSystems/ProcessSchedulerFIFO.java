@@ -31,7 +31,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
         }
     }
 
-    //method incase we want to add a singular process to the queue.
+    //Process Handling Methods
     public void addProcess(Process process) {
         process.setArrivalTime(currentTime.get());
         readyQueue.add(process);

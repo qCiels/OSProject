@@ -8,10 +8,13 @@ public class ScheduleFactory {
                 return new ProcessSchedulerFIFO();
 
             /*case "SJF":
-                return new ProcessSchedulerSJF();
+                return new ProcessSchedulerSJF();*/
 
-            case "PRIORITY":
-                return new ProcessSchedulerPriority();
+            case "PRIORITY NON-PREEMPTIVE":
+                return new ProcessSchedulerPN();
+
+            case "PRIORITY PREEMPTIVE":
+                return new ProcessSchedulerPP();
 
             /*case "ROUND_ROBIN":
                 return new ProcessSchedulerRoundRobin();*/
