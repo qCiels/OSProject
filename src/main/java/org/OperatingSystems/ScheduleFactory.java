@@ -19,6 +19,9 @@ public class ScheduleFactory {
             /*case "ROUND_ROBIN":
                 return new ProcessSchedulerRoundRobin();*/
 
+            case "SHORTEST REMAINING TIME FIRST":
+                return new ProcessSchedulerSRTF();
+
             default:
                 throw new IllegalArgumentException("Unknown scheduling algorithm: " + algorithm);
         }

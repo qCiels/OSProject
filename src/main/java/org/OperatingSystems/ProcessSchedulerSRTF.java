@@ -1,0 +1,107 @@
+package org.OperatingSystems;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ProcessSchedulerSRTF implements Scheduler, Runnable {
+
+    private Thread schedulerThread;
+
+    private PriorityBlockingQueue<Process> readyQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(Process::getRemainingBurstTime));
+    private AtomicInteger currentTime = new AtomicInteger(0);
+    private volatile boolean isRunning = false;
+
+    public void startScheduler() {
+        if (schedulerThread == null || !schedulerThread.isAlive()) {
+            isRunning = true;
+            schedulerThread = new Thread(this, "SRTF Scheduler Thread");
+            schedulerThread.start();
+        }
+    }
+
+    public void stopScheduler() {
+        isRunning = false;
+
+        if (schedulerThread != null) {
+            schedulerThread.interrupt();
+        }
+    }
+
+    public void addProcess(Process process) {
+        process.setArrivalTime(currentTime.get());
+        readyQueue.add(process);
+    }
+
+    public void addProcesses(List<Process> processes) {
+        for (Process process : processes) {
+            addProcess(process);
+        }
+    }
+
+    private boolean shorterRemainingTimeExists(Process currentProcess) {
+        Process nextProcess = readyQueue.peek();
+
+        if (nextProcess == null) {
+            return false;
+        }
+
+        boolean shorterProcessFound = nextProcess.getRemainingBurstTime() < currentProcess.getRemainingBurstTime();
+
+        return shorterProcessFound;
+    }
+
+    @Override
+    public void run() {
+        while (isRunning) {
+            try {
+                Process currentProcess = readyQueue.take();
+
+                if (currentProcess.getRemainingBurstTime()
+                        == currentProcess.getBurstTime()) {
+                    currentProcess.setStartTime(currentTime.get());
+                }
+
+                int remainingTime = currentProcess.getRemainingBurstTime();
+
+                while (remainingTime > 0 && isRunning) {
+                    Thread.sleep(1000);
+
+                    remainingTime--;
+                    currentProcess.setRemainingBurstTime(remainingTime);
+                    currentTime.incrementAndGet();
+
+                    if (shorterRemainingTimeExists(currentProcess)) {
+                        readyQueue.add(currentProcess);
+                        break;
+                    }
+                }
+
+                if (!isRunning) {
+                    break;
+                }
+
+                if (currentProcess.getRemainingBurstTime() == 0) {
+                    currentProcess.setCompletionTime(currentTime.get());
+
+                    currentProcess.setTurnaroundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
+
+                    currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
+
+                    currentProcess.setResponseTime(currentProcess.getStartTime() - currentProcess.getArrivalTime());
+                }
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                isRunning = false;
+            }
+        }
+    }
+
+    @Override
+    public void schedule(List<Process> processes) {
+        addProcesses(processes);
+        startScheduler();
+    }
+}
