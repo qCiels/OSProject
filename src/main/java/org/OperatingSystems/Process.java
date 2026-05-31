@@ -9,6 +9,7 @@ public class Process {
         private int waitingTime;
         private int turnaroundTime;
         private int responseTime;
+        private int priority;
 
         // constructors, getters, setters
     public Process(int processId, int arrivalTime, int burstTime) {
@@ -54,6 +55,14 @@ public class Process {
         this.responseTime = responseTime;
     }
 
+    //Priority 0 is highest priority
+    public void setPriority(int priority) {
+        if (priority < 0) {
+            throw new ProcessException("Priority cannot be negative");
+        }
+        this.priority = priority;
+    }
+
     //Getters
     public int getProcessId() {
         return processId;
@@ -78,5 +87,8 @@ public class Process {
     }
     public int getResponseTime() {
         return responseTime;
+    }
+    public int getPriority() {
+        return priority;
     }
 }
