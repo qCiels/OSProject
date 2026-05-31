@@ -5,15 +5,17 @@ import java.util.List;
 
 public class SimulationClass {
 
-    public static void simulateFifo() {
+    public static void simulate(String algorithm) {
         List<Process> processes = new ArrayList<>();
+        Builder builder = new Builder();
 
-        processes.add(new Process(1, 0, 5));
-        processes.add(new Process(2, 2, 3));
-        processes.add(new Process(3, 4, 2));
-        processes.add(new Process(4, 6, 4));
 
-        Scheduler scheduler = new ProcessSchedulerFIFO();
+        processes.add(builder.processId(1).arrivalTime(0).burstTime(5).build());
+        processes.add(builder.processId(2).arrivalTime(2).burstTime(3).build());
+        processes.add(builder.processId(3).arrivalTime(4).burstTime(2).build());
+        processes.add(builder.processId(4).arrivalTime(6).burstTime(4).build());
+
+        Scheduler scheduler = new ScheduleFactory().createScheduler(algorithm);
         scheduler.schedule(processes);
 
         for (Process p : processes) {

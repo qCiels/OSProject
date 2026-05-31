@@ -12,14 +12,9 @@ public class Process {
         private int priority;
 
         // constructors, getters, setters
-    public Process(int processId, int arrivalTime, int burstTime) {
-        setProcessId(processId);
-        setArrivalTime(arrivalTime);
-        setBurstTime(burstTime);
+    public Process() {
 
     }
-
-
     //Setters
     public void setProcessId(int processId) {
         if (processId <= 0) {
