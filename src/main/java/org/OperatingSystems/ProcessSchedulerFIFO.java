@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//First In First Out Scheduler
 public class ProcessSchedulerFIFO implements Scheduler , Runnable {
 
     //fields
@@ -62,6 +63,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
                 if (!isRunning) {
                     break;
                 }
+
                 currentProcess.setCompletionTime(currentTime.get());
 
                 // Turnaround time is simply completion time - arrival time.

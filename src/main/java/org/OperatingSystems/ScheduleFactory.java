@@ -1,5 +1,7 @@
 package org.OperatingSystems;
 
+
+//Factory Class
 public class ScheduleFactory {
 
     public static Scheduler createScheduler(String algorithm) {

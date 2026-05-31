@@ -1,17 +1,14 @@
 package org.OperatingSystems;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//Priority scheduler Non-Premptive
-public class ProcessSchedulerPN implements Scheduler, Runnable {
+public class ProcessSchedulerSJF implements Scheduler , Runnable {
 
-    //Variable Fields
     private Thread schedulerThread;
-    private PriorityBlockingQueue<Process> readyQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(Process::getPriority));
+    private PriorityBlockingQueue<Process> readyQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(Process::getBurstTime));
     private AtomicInteger currentTime = new AtomicInteger(0);
     private volatile boolean isRunning = false;
 
@@ -19,7 +16,7 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
     public void startScheduler() {
         if (schedulerThread == null || !schedulerThread.isAlive()) {
             isRunning = true;
-            schedulerThread = new Thread(this, "PN Scheduler Thread");
+            schedulerThread = new Thread(this, "SJF Scheduler Thread");
             schedulerThread.start();
         }
     }
@@ -33,37 +30,21 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
 
     //Process Handling Methods
     public void addProcess(Process process) {
-        if (process.getPriority() == null) {
-            throw new ProcessException("Priority Scheduling requires a priority value.");
-        }
-
         process.setArrivalTime(currentTime.get());
         readyQueue.add(process);
     }
+
     public void addProcesses(List<Process> processes) {
         for (Process process : processes) {
             addProcess(process);
         }
     }
 
-    private void applyAging() {
-        ArrayList<Process> temp = new ArrayList<>();
-
-        readyQueue.drainTo(temp);
-
-        for (Process process : temp) {
-            if (process.getPriority() > 0) {
-                process.setPriority(process.getPriority() - 1);
-            }
-        }
-
-        readyQueue.addAll(temp);
-    }
-
     @Override
     public void run() {
         while (isRunning) {
             try {
+
                 Process currentProcess = readyQueue.take();
                 currentProcess.setStartTime(currentTime.get());
                 int remainingTime = currentProcess.getRemainingBurstTime();
@@ -79,19 +60,17 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
                     break;
                 }
 
-
                 currentProcess.setCompletionTime(currentTime.get());
 
                 // Turnaround time is simply completion time - arrival time.
                 currentProcess.setTurnaroundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
 
                 // Waiting time is simply startTime - arrival time.
-                currentProcess.setWaitingTime(currentProcess.getStartTime() - currentProcess.getArrivalTime());
+                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
 
-                // In non-preemptive scheduling, response time equals waiting time because the process starts only once.
+                // IN Shortest Job First, response time equals waiting time because the process starts only once.
                 currentProcess.setResponseTime(currentProcess.getWaitingTime());
                 //In operating systems aging happens after the completion of a process.
-                applyAging();
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

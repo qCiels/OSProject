@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//Shortest Remaining Time First Scheduler
 public class ProcessSchedulerSRTF implements Scheduler, Runnable {
 
     private Thread schedulerThread;
@@ -58,8 +59,7 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
             try {
                 Process currentProcess = readyQueue.take();
 
-                if (currentProcess.getRemainingBurstTime()
-                        == currentProcess.getBurstTime()) {
+                if (currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
                     currentProcess.setStartTime(currentTime.get());
                 }
 

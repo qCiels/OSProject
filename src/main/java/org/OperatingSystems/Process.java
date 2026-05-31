@@ -12,7 +12,7 @@ public class Process {
         private Integer priority;
         private int remainingBurstTime;
 
-        // constructors, getters, setters
+    // constructors, getters, setters
     public Process() {
 
     }

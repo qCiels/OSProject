@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//Priority scheduler Premptive
 public class ProcessSchedulerPP implements Scheduler, Runnable {
 
     private Thread schedulerThread;
@@ -82,11 +83,11 @@ public class ProcessSchedulerPP implements Scheduler, Runnable {
                 if (currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
                     currentProcess.setStartTime(currentTime.get());
                 }
+
                 int remainingTime = currentProcess.getRemainingBurstTime();
 
                 while (remainingTime > 0 && isRunning) {
                     Thread.sleep(1000);
-
                     remainingTime--;
                     currentProcess.setRemainingBurstTime(remainingTime);
                     currentTime.incrementAndGet();
@@ -100,6 +101,7 @@ public class ProcessSchedulerPP implements Scheduler, Runnable {
                 if (!isRunning) {
                     break;
                 }
+
                 if (currentProcess.getRemainingBurstTime() == 0) {
                     currentProcess.setCompletionTime(currentTime.get());
 
