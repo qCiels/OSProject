@@ -37,6 +37,7 @@ public class Builder {
         if (priority != null ) {
             process.setPriority(priority);
         }
+
         return process;
     }
 }

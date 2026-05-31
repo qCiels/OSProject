@@ -9,7 +9,8 @@ public class Process {
         private int waitingTime;
         private int turnaroundTime;
         private int responseTime;
-        private int priority;
+        private Integer priority;
+        private int remainingBurstTime;
 
         // constructors, getters, setters
     public Process() {
@@ -33,6 +34,7 @@ public class Process {
             throw new ProcessException("Burst time cannot be negative");
         }
         this.burstTime = burstTime;
+        this.remainingBurstTime = burstTime;
     }
     public void setStartTime(int startTime) {
         this.startTime = startTime;
@@ -49,14 +51,23 @@ public class Process {
     public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
+    public void setRemainingBurstTime(int remainingBurstTime) {
+        if (remainingBurstTime < 0) {
+            throw new ProcessException("Remaining burst time cannot be negative");
+        }
+        this.remainingBurstTime = remainingBurstTime;
+    }
 
-    //Priority 0 is highest priority
-    public void setPriority(int priority) {
+
+    //Priority 0 is the highest priority
+    public void setPriority(Integer priority) {
         if (priority < 0) {
             throw new ProcessException("Priority cannot be negative");
         }
         this.priority = priority;
     }
+
+
 
     //Getters
     public int getProcessId() {
@@ -83,7 +94,13 @@ public class Process {
     public int getResponseTime() {
         return responseTime;
     }
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
+
+    public int getRemainingBurstTime() {
+        return remainingBurstTime;
+    }
+
+
 }

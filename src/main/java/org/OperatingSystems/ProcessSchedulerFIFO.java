@@ -1,63 +1,89 @@
 package org.OperatingSystems;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ProcessSchedulerFIFO implements Scheduler {
+public class ProcessSchedulerFIFO implements Scheduler , Runnable {
 
-    private Queue<Process> readyQueue = new ArrayDeque<>();
-    private int currentTime = 0;
+    //fields
+    private volatile boolean isRunning = false;
+    private BlockingQueue<Process> readyQueue = new LinkedBlockingQueue<>();
+    private AtomicInteger currentTime = new AtomicInteger(0);
+    private Thread schedulerThread;
 
+
+    //concurrency methods
+    public void startScheduler() {
+        if (schedulerThread == null || !schedulerThread.isAlive()) {
+            isRunning = true;
+            schedulerThread = new Thread(this, "FIFO Scheduler Thread");
+            schedulerThread.start();
+        }
+    }
+
+    public void stopScheduler() {
+        isRunning = false;
+
+        if (schedulerThread != null) {
+            schedulerThread.interrupt();
+        }
+    }
+
+    //method incase we want to add a singular process to the queue.
     public void addProcess(Process process) {
+        process.setArrivalTime(currentTime.get());
         readyQueue.add(process);
     }
 
-    public void addProcesses(List<Process> processes) {
-        // Sorts processes using the built-in Comparator, as we are comparing the arrival time, which is an int variable.
-        // Process::getArrivalTime means that for every process, we call getArrivalTime(), then sort in ascending order by default.
-        processes.sort(Comparator.comparingInt(Process::getArrivalTime));
 
-        readyQueue.addAll(processes);
+    public void addProcesses(List<Process> processes) {
+        for (Process process : processes) {
+            addProcess(process);
+        }
     }
 
     public void run() {
-        while (!readyQueue.isEmpty()) {
-            Process currentProcess = readyQueue.poll();
+        while (isRunning) {
+            try {
 
-            // Idle-time check: if the next process has not arrived yet,
-            // advance the current time to its arrival time.
-            if (currentTime < currentProcess.getArrivalTime()) {
-                currentTime = currentProcess.getArrivalTime();
+                Process currentProcess = readyQueue.take();
+                currentProcess.setStartTime(currentTime.get());
+                int remainingTime = currentProcess.getRemainingBurstTime();
+
+                while (remainingTime > 0 && isRunning) {
+                    Thread.sleep(1000);
+                    remainingTime--;
+                    currentProcess.setRemainingBurstTime(remainingTime);
+                    currentTime.incrementAndGet();
+                }
+
+                if (!isRunning) {
+                    break;
+                }
+                currentProcess.setCompletionTime(currentTime.get());
+
+                // Turnaround time is simply completion time - arrival time.
+                currentProcess.setTurnaroundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
+
+                // Waiting time is simply startTime - arrival time.
+                currentProcess.setWaitingTime(currentProcess.getStartTime() - currentProcess.getArrivalTime());
+
+                // In FIFO, response time equals waiting time because the process starts only once.
+                currentProcess.setResponseTime(currentProcess.getWaitingTime());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                isRunning = false;
             }
-
-            currentProcess.setStartTime(currentTime);
-
-            // Completion time in FIFO is simply startTime + burstTime.
-            // After the idle-time check, startTime = currentTime.
-            currentProcess.setCompletionTime(currentTime + currentProcess.getBurstTime());
-
-            // Turnaround time is simply completion time - arrival time.
-            currentProcess.setTurnaroundTime(
-                    currentProcess.getCompletionTime() - currentProcess.getArrivalTime()
-            );
-
-            // Waiting time is simply startTime - arrival time.
-            currentProcess.setWaitingTime(
-                    currentProcess.getStartTime() - currentProcess.getArrivalTime()
-            );
-
-            // In FIFO, response time equals waiting time because the process starts only once.
-            currentProcess.setResponseTime(currentProcess.getWaitingTime());
-
-            currentTime = currentProcess.getCompletionTime();
         }
     }
 
     @Override
     public void schedule(List<Process> processes) {
         addProcesses(processes);
-        run();
+        startScheduler();
     }
+
+
 }
