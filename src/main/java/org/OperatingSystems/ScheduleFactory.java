@@ -7,22 +7,26 @@ public class ScheduleFactory {
     public static Scheduler createScheduler(String algorithm) {
         switch (algorithm.toUpperCase()) {
             //IN-CLASS
-            case "FIFO": return new ProcessSchedulerFIFO();
+            case "FIRST IN FIRST OUT": return new ProcessSchedulerFIFO();
+
             //IN-CLASS
-            case "SJF": return new ProcessSchedulerSJF();
+            case "SHORTEST JOB FIRST": return new ProcessSchedulerSJF();
+
             //IN-CLASS
             case "PRIORITY NON-PREEMPTIVE": return new ProcessSchedulerPN();
+
             //IN-CLASS
             case "PRIORITY PREEMPTIVE": return new ProcessSchedulerPP();
 
             //IN-CLASS
-            /*case "ROUND_ROBIN":
-                return new ProcessSchedulerRoundRobin();*/
+            case "ROUND_ROBIN SCHEDULING": return new ProcessSchedulerRRS();
 
             //BONUS
             case "SHORTEST REMAINING TIME FIRST": return new ProcessSchedulerSRTF();
+
             //BONUS
             case "LONGEST REMAINING TIME FIRST": return new ProcessSchedulerLRTF();
+
             //BONUS
             case "GURANTEED SCHEDULING": return new ProcessSchedulerPP();
 
