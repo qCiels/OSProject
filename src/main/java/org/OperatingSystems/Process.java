@@ -11,6 +11,7 @@ public class Process {
         private int responseTime;
         private Integer priority;
         private int remainingBurstTime;
+        private int cpuTimeReceived;
 
     // constructors, getters, setters
     public Process() {
@@ -58,6 +59,13 @@ public class Process {
         this.remainingBurstTime = remainingBurstTime;
     }
 
+    public void setCpuTimeReceived(int cpuTimeReceived) {
+        if (cpuTimeReceived < 0) {
+            throw new ProcessException("CPU time received cannot be negative");
+        }
+        this.cpuTimeReceived = cpuTimeReceived;
+    }
+
 
     //Priority 0 is the highest priority
     public void setPriority(Integer priority) {
@@ -102,5 +110,9 @@ public class Process {
         return remainingBurstTime;
     }
 
+
+    public int getCpuTimeReceived() {
+        return cpuTimeReceived;
+    }
 
 }
