@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.OperatingSystems.HomeController">
+   <top>
+      <VBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label style="-fx-font-size: 24; -fx-font-weight: bold;" text="Operating System Project " textAlignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" style="-fx-font-size: 16;" text="Process Scheduler Simulator">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </top>
+   <center>
+      <HBox alignment="TOP_CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" spacing="80.0" BorderPane.alignment="TOP_CENTER">
+         <children>
+            <VBox alignment="CENTER" fillWidth="false" prefHeight="288.0" prefWidth="200.0" spacing="8.0">
+               <children>
+                  <Label prefWidth="150.0" text="Scheduler Algorithim" translateY="-30.0" />
+                  <ComboBox id="schedulerComboBox" fx:id="schedulerComboBox" prefWidth="150.0" promptText="Select Scheduler" translateY="-30.0" />
+                  <Label id="timeQuantumLabel" fx:id="timeQuantumLabel" text="Time Quantum" translateX="-2.0" translateY="-25.0" visible="false" />
+                  <TextField id="timeQuantumField" fx:id="timeQuantumField" prefHeight="25.0" prefWidth="75.0" translateX="-2.0" translateY="-25.0" visible="false" />
+                  <Button id="startButton" fx:id="startButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white; -fx-font-weight: bold;" text="Start Simulation" />
+               </children>
+            </VBox>
+            <VBox maxWidth="-Infinity" prefHeight="168.0" prefWidth="300.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #f8f8f8;" translateX="-25.0" translateY="50.0">
+               <children>
+                  <Label id="descriptionLabel" fx:id="descriptionLabel" style="-fx-border-color: #c0c0c0; -fx-border-width: 1; -fx-background-color: white; -fx-padding: 15;" text="Select a scheduler to view its description." translateX="10.0" translateY="35.0" wrapText="true" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+   <bottom>
+      <Label style="-fx-font-size: 10; -fx-text-fill: gray;" text="Made By: Omar Al-Shalabi, Karem Al-Halawani, Mustabir Islam" BorderPane.alignment="BOTTOM_LEFT" />
+   </bottom>
+</BorderPane>

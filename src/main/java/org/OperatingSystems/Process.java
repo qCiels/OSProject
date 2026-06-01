@@ -1,17 +1,23 @@
 package org.OperatingSystems;
 
 public class Process {
-        private int processId;
-        private int arrivalTime;
-        private int burstTime;
-        private int startTime;
-        private int completionTime;
-        private int waitingTime;
-        private int turnaroundTime;
-        private int responseTime;
-        private Integer priority;
-        private int remainingBurstTime;
-        private int cpuTimeReceived;
+    //Process identifier
+    private int processId;
+    //Process attributes
+    private int arrivalTime;
+    private int burstTime;
+
+    //Process metrics
+    private int startTime;
+    private int completionTime;
+    private int waitingTime;
+    private int turnaroundTime;
+    private int responseTime;
+
+    //Scheduling Helpers
+    private Integer priority;
+    private int remainingBurstTime;
+    private int cpuTimeReceived;
 
     // constructors, getters, setters
     public Process() {
@@ -74,7 +80,6 @@ public class Process {
         }
         this.priority = priority;
     }
-
 
 
     //Getters
