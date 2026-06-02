@@ -1,5 +1,6 @@
 package org.OperatingSystems;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -10,6 +11,7 @@ public class ProcessSchedulerLRTF implements Scheduler , Runnable {
 
         private Thread schedulerThread;
         private PriorityBlockingQueue<Process> readyQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(Process::getRemainingBurstTime).reversed());
+        private List<String> timeline = new ArrayList<>();
         private AtomicInteger currentTime = new AtomicInteger(0);
         private volatile boolean isRunning = false;
 
@@ -67,7 +69,7 @@ public class ProcessSchedulerLRTF implements Scheduler , Runnable {
 
                     while (remainingTime > 0 && isRunning) {
                         Thread.sleep(1000);
-
+                        timeline.add("P" + currentProcess.getProcessId());
                         remainingTime--;
                         currentProcess.setRemainingBurstTime(remainingTime);
                         currentTime.incrementAndGet();
@@ -108,6 +110,10 @@ public class ProcessSchedulerLRTF implements Scheduler , Runnable {
         }
         public String getSchedulerName() {
             return "LONGEST REMAINING TIME FIRST";
+        }
+
+        public List<String> getTimeline() {
+            return timeline;
         }
     }
 

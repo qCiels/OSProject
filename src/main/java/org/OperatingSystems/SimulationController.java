@@ -1,10 +1,14 @@
 package org.OperatingSystems;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimulationController {
 
@@ -97,6 +101,7 @@ public class SimulationController {
     public void initialize() {
         addProcessButton.setOnAction(event -> handlerAddProcess());
         backButton.setOnAction(event -> handlerBackButton());
+        startButton.setOnAction(event -> handlerStartButton());
 
 
         pidColumn.setCellValueFactory(new PropertyValueFactory<>("processId"));
@@ -186,14 +191,49 @@ public class SimulationController {
 
         dialog.showAndWait().ifPresent(process -> {processTable.getItems().add(process);});
     }
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
-        schedulerNameLabel.setText(scheduler.getSchedulerName());
+
+    private void handlerStartButton() {
+        List<Process> processes = new ArrayList<>(processTable.getItems());
+
+        if (processes.isEmpty()) {showAlert("Please add at least one process before starting.");
+            return;
+        }
+
+        scheduler.schedule(processes);
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000); // temporary only
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Platform.runLater(() -> updateGanttChart());
+        }).start();
+
+
+        updateGanttChart();
     }
 
     public void handlerBackButton() {
         SceneManager.showHomePage();
     }
+
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+        schedulerNameLabel.setText(scheduler.getSchedulerName());
+    }
+
+    private void updateGanttChart() {
+        ganttHBox.getChildren().clear();
+
+        for (String pid : scheduler.getTimeline()) {
+            Label block = new Label(pid);
+            block.setMinWidth(40);
+            ganttHBox.getChildren().add(block);
+        }
+    }
+
     private boolean processIDExists(int processID) {
 
         for (Process process : processTable.getItems()) {
@@ -204,5 +244,13 @@ public class SimulationController {
         }
 
         return false;
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Input Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

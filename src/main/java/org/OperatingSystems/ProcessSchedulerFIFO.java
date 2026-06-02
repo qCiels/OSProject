@@ -11,6 +11,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
     //fields
     private volatile boolean isRunning = false;
     private BlockingQueue<Process> readyQueue = new LinkedBlockingQueue<>();
+    private List<String> timeline = new ArrayList<>();
     private AtomicInteger currentTime = new AtomicInteger(0);
     private Thread schedulerThread;
 
@@ -56,6 +57,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
 
                 while (remainingTime > 0 && isRunning) {
                     Thread.sleep(1000);
+                    timeline.add("P" + currentProcess.getProcessId());
                     remainingTime--;
                     currentProcess.setRemainingBurstTime(remainingTime);
                     currentTime.incrementAndGet();
@@ -90,5 +92,8 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
     }
     public String getSchedulerName() {
         return "FIRST IN FIRST OUT";
+    }
+    public List<String> getTimeline() {
+        return timeline;
     }
 }

@@ -1,5 +1,6 @@
 package org.OperatingSystems;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,6 +12,7 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
     private volatile boolean isRunning = false;
     private BlockingQueue<Process> readyQueue = new LinkedBlockingQueue<>();
     private AtomicInteger currentTime = new AtomicInteger(0);
+    private List<String> timeline = new ArrayList<>();
     private Thread schedulerThread;
     private int timeQuantum;
 
@@ -62,6 +64,7 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
 
                 while ( (remainingTime > 0) && (isRunning) && (timeUsed < timeQuantum) ) {
                     Thread.sleep(1000);
+                    timeline.add("P" + currentProcess.getProcessId());
                     remainingTime--;
                     timeUsed++;
                     currentProcess.setRemainingBurstTime(remainingTime);
@@ -117,5 +120,9 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
     }
     public String getSchedulerName() {
         return "Round Robin Scheduling";
+    }
+
+    public List<String> getTimeline() {
+        return timeline;
     }
 }

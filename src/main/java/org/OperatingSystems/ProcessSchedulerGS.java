@@ -1,5 +1,6 @@
 package org.OperatingSystems;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -11,6 +12,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     //Variable Fields
     private Thread schedulerThread;
     private PriorityBlockingQueue<Process> readyQueue = new PriorityBlockingQueue<>(11, Comparator.comparingInt(Process::getCpuTimeReceived));
+    private List<String> timeline = new ArrayList<>();
     private AtomicInteger currentTime = new AtomicInteger(0);
     private volatile boolean isRunning = false;
 
@@ -69,6 +71,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
 
                 while (remainingTime > 0 && isRunning) {
                     Thread.sleep(1000);
+                    timeline.add("P" + currentProcess.getProcessId());
                     remainingTime--;
                     currentProcess.setRemainingBurstTime(remainingTime);
                     currentProcess.setCpuTimeReceived(currentProcess.getCpuTimeReceived() + 1);
@@ -110,6 +113,9 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     }
     public String getSchedulerName() {
         return "GUARANTEED SCHEDULING";
+    }
+    public List<String> getTimeline() {
+        return timeline;
     }
 
 }
