@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-
+//Shortest Job First Scheduler, non pre-emptive.
 public class ProcessSchedulerSJF implements Scheduler , Runnable {
 
     private Thread schedulerThread;
@@ -46,6 +46,7 @@ public class ProcessSchedulerSJF implements Scheduler , Runnable {
             try {
 
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
                 currentProcess.setStartTime(currentTime.get());
                 int remainingTime = currentProcess.getRemainingBurstTime();
 
@@ -60,6 +61,7 @@ public class ProcessSchedulerSJF implements Scheduler , Runnable {
                     break;
                 }
 
+                currentProcess.setState("COMPLETED");
                 currentProcess.setCompletionTime(currentTime.get());
 
                 // Turnaround time is simply completion time - arrival time.
@@ -84,5 +86,8 @@ public class ProcessSchedulerSJF implements Scheduler , Runnable {
     public void schedule(List<Process> processes) {
         addProcesses(processes);
         startScheduler();
+    }
+    public String getSchedulerName() {
+        return "SHORTEST JOB FIRST";
     }
 }

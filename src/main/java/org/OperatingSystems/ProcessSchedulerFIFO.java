@@ -50,6 +50,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
             try {
 
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
                 currentProcess.setStartTime(currentTime.get());
                 int remainingTime = currentProcess.getRemainingBurstTime();
 
@@ -64,6 +65,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
                     break;
                 }
 
+                currentProcess.setState("COMPLETED");
                 currentProcess.setCompletionTime(currentTime.get());
 
                 // Turnaround time is simply completion time - arrival time.
@@ -86,6 +88,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
         addProcesses(processes);
         startScheduler();
     }
-
-
+    public String getSchedulerName() {
+        return "FIRST IN FIRST OUT";
+    }
 }

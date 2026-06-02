@@ -59,6 +59,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
         while (isRunning) {
             try {
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
 
                 if (currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
                     currentProcess.setStartTime(currentTime.get());
@@ -74,6 +75,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
                     currentTime.incrementAndGet();
 
                     if (lowerCpuTimeReceivedExists(currentProcess)) {
+                        currentProcess.setState("READY");
                         readyQueue.add(currentProcess);
                         break;
                     }
@@ -84,6 +86,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
                 }
 
                 if (currentProcess.getRemainingBurstTime() == 0) {
+                    currentProcess.setState("COMPLETED");
                     currentProcess.setCompletionTime(currentTime.get());
 
                     currentProcess.setTurnaroundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
@@ -104,6 +107,9 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     public void schedule(List<Process> processes) {
         addProcesses(processes);
         startScheduler();
+    }
+    public String getSchedulerName() {
+        return "GUARANTEED SCHEDULING";
     }
 
 }

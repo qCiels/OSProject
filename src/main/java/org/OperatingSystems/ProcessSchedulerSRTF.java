@@ -58,6 +58,7 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
         while (isRunning) {
             try {
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
 
                 if (currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
                     currentProcess.setStartTime(currentTime.get());
@@ -73,6 +74,7 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
                     currentTime.incrementAndGet();
 
                     if (shorterRemainingTimeExists(currentProcess)) {
+                        currentProcess.setState("READY");
                         readyQueue.add(currentProcess);
                         break;
                     }
@@ -83,6 +85,7 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
                 }
 
                 if (currentProcess.getRemainingBurstTime() == 0) {
+                    currentProcess.setState("COMPLETED");
                     currentProcess.setCompletionTime(currentTime.get());
 
                     currentProcess.setTurnaroundTime(currentProcess.getCompletionTime() - currentProcess.getArrivalTime());
@@ -103,5 +106,8 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
     public void schedule(List<Process> processes) {
         addProcesses(processes);
         startScheduler();
+    }
+    public String getSchedulerName() {
+        return "SHORTEST REMAINING TIME FIRST";
     }
 }

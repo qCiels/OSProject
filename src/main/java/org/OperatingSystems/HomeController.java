@@ -61,9 +61,7 @@ public class HomeController {
                 return;
             }
         }
-
-        // Later:
-        // SceneManager.showSimulationPage(scheduler, selected);
+        SceneManager.showSimulationPage(scheduler);
     }
 
 
@@ -105,13 +103,13 @@ public class HomeController {
                         "Priority Scheduling , non-preemptive. The process with the lowest priority that is ready to run is executed first."
                 );
 
-            case "Round Robin":
+            case "RRS":
                 descriptionLabel.setText(
                         "Round Robin, preemptive. Each process receives a fixed time quantum before the CPU is assigned to the next process."
                 );
                 break;
 
-            case "Guaranteed Scheduling":
+            case "GS":
                 descriptionLabel.setText(
                         "Guaranteed Scheduling, preemptive. Processes that have received less CPU time are given higher priority to ensure fair CPU allocation."
                 );

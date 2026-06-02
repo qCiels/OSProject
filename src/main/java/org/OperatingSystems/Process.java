@@ -1,11 +1,11 @@
 package org.OperatingSystems;
 
 public class Process {
-    //Process identifier
+    //Process identifiers
     private int processId;
-    //Process attributes
     private int arrivalTime;
     private int burstTime;
+    private String state = "READY";
 
     //Process metrics
     private int startTime;
@@ -18,6 +18,7 @@ public class Process {
     private Integer priority;
     private int remainingBurstTime;
     private int cpuTimeReceived;
+
 
     // constructors, getters, setters
     public Process() {
@@ -73,14 +74,17 @@ public class Process {
     }
 
 
-    //Priority 0 is the highest priority
+    //Priority 0 is the highest priority, -1 is an error value for when process lacks priority
     public void setPriority(Integer priority) {
-        if (priority < 0) {
+        if (priority < -1 ) {
             throw new ProcessException("Priority cannot be negative");
         }
         this.priority = priority;
     }
 
+    public void setState(String state) {
+        this.state = state;
+    }
 
     //Getters
     public int getProcessId() {
@@ -119,5 +123,10 @@ public class Process {
     public int getCpuTimeReceived() {
         return cpuTimeReceived;
     }
+
+    public String getState() {
+        return state;
+    }
+
 
 }

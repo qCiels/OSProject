@@ -7,28 +7,28 @@ public class ScheduleFactory {
     public static Scheduler createScheduler(String algorithm) {
         switch (algorithm.toUpperCase()) {
             //IN-CLASS
-            case "FIRST IN FIRST OUT": return new ProcessSchedulerFIFO();
+            case "FIFO": return new ProcessSchedulerFIFO();
 
             //IN-CLASS
-            case "SHORTEST JOB FIRST": return new ProcessSchedulerSJF();
+            case "SJF": return new ProcessSchedulerSJF();
 
             //IN-CLASS
-            case "PRIORITY NON-PREEMPTIVE": return new ProcessSchedulerPN();
+            case "PN": return new ProcessSchedulerPN();
 
             //IN-CLASS
-            case "PRIORITY PREEMPTIVE": return new ProcessSchedulerPP();
+            case "PP": return new ProcessSchedulerPP();
 
             //IN-CLASS
-            case "ROUND_ROBIN SCHEDULING": return new ProcessSchedulerRRS();
+            case "RRS": return new ProcessSchedulerRRS();
 
             //BONUS
-            case "SHORTEST REMAINING TIME FIRST": return new ProcessSchedulerSRTF();
+            case "SRTF": return new ProcessSchedulerSRTF();
 
             //BONUS
-            case "LONGEST REMAINING TIME FIRST": return new ProcessSchedulerLRTF();
+            case "LRTF": return new ProcessSchedulerLRTF();
 
             //BONUS
-            case "GURANTEED SCHEDULING": return new ProcessSchedulerPP();
+            case "GS": return new ProcessSchedulerGS();
 
             default:
                 throw new IllegalArgumentException("Unknown scheduling algorithm: " + algorithm);

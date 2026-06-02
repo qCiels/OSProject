@@ -39,7 +39,7 @@
             </VBox>
             <VBox maxWidth="-Infinity" prefHeight="168.0" prefWidth="300.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #f8f8f8;" translateX="-25.0" translateY="50.0">
                <children>
-                  <Label id="descriptionLabel" fx:id="descriptionLabel" style="-fx-border-color: #c0c0c0; -fx-border-width: 1; -fx-background-color: white; -fx-padding: 15;" text="Select a scheduler to view its description." translateX="10.0" translateY="35.0" wrapText="true" />
+                  <Label id="descriptionLabel" fx:id="descriptionLabel" style="-fx-border-color: #c0c0c0; -fx-border-width: 1; -fx-background-color: white; -fx-padding: 15;" text="Select a scheduler to view its description." translateX="5.0" translateY="35.0" wrapText="true" />
                </children>
             </VBox>
          </children>

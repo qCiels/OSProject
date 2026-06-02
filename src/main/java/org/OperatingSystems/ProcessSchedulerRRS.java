@@ -53,6 +53,7 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
         while (isRunning) {
             try {
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
                 if ( currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
                     currentProcess.setStartTime(currentTime.get());
                 }
@@ -72,8 +73,10 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
                 }
 
                 if (currentProcess.getRemainingBurstTime() > 0) {
+                    currentProcess.setState("READY");
                     readyQueue.add(currentProcess);
                 } else {
+                    currentProcess.setState("COMPLETED");
                     currentProcess.setCompletionTime(currentTime.get());
 
                     // Turnaround time is simply completion time - arrival time.
@@ -111,5 +114,8 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
             throw new ProcessException("Time quantum must be a positive integer");
         }
         this.timeQuantum = timeQuantum;
+    }
+    public String getSchedulerName() {
+        return "Round Robin Scheduling";
     }
 }

@@ -65,6 +65,7 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
         while (isRunning) {
             try {
                 Process currentProcess = readyQueue.take();
+                currentProcess.setState("RUNNING");
                 currentProcess.setStartTime(currentTime.get());
                 int remainingTime = currentProcess.getRemainingBurstTime();
 
@@ -80,6 +81,7 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
                 }
 
 
+                currentProcess.setState("COMPLETED");
                 currentProcess.setCompletionTime(currentTime.get());
 
                 // Turnaround time is simply completion time - arrival time.
@@ -105,5 +107,8 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
     public void schedule(List<Process> processes) {
         addProcesses(processes);
         startScheduler();
+    }
+    public String getSchedulerName() {
+        return "PRIORITY NON-PREMPTIVE";
     }
 }
