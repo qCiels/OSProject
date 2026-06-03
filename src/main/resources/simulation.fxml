@@ -48,32 +48,32 @@
       </Label>
       <VBox layoutX="480.0" layoutY="205.0" prefHeight="417.0" prefWidth="848.0" style="-fx-border-color: c7c7c7; -fx-border-width: 1; -fx-background-color: white;">
          <children>
-            <Label fx:id="currentTimeLabel" prefHeight="50.0" prefWidth="152.0" text=" Current Time :">
+            <Label fx:id="currentTimeLabel" prefHeight="38.0" prefWidth="205.0" text=" Current Time :">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="schedulerStatusLabel" prefHeight="50.0" prefWidth="135.0" text=" Scheduler State :">
+            <Label fx:id="schedulerStatusLabel" prefHeight="36.0" prefWidth="181.0" text=" Scheduler State :">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="runningProcessLabel" prefHeight="52.0" prefWidth="142.0" text=" Running Process :">
+            <Label fx:id="runningProcessLabel" prefHeight="36.0" prefWidth="176.0" text=" Running Process :">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="readyQueueLabel" prefHeight="53.0" prefWidth="136.0" text=" Ready Queue :">
+            <Label fx:id="readyQueueLabel" prefHeight="43.0" prefWidth="222.0" text=" Ready Queue :">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="nextProcessLabel" prefHeight="51.0" prefWidth="109.0" text=" Next Process:">
+            <Label fx:id="nextProcessLabel" prefHeight="43.0" prefWidth="253.0" text=" Next Process:">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label fx:id="completedProcessesLabel" prefHeight="51.0" prefWidth="163.0" text=" Completed Processes :">
+            <Label fx:id="completedProcessesLabel" prefHeight="44.0" prefWidth="305.0" text=" Completed Processes :">
                <font>
                   <Font size="15.0" />
                </font>
@@ -103,11 +103,17 @@
             </TableView>
          </children>
       </VBox>
-      <Label layoutX="484.0" layoutY="631.0" prefHeight="30.0" prefWidth="207.0" style="-fx-font-weight: bold;" text="Completed Processes">
+      <Button fx:id="backButton" layoutX="1235.0" layoutY="41.0" mnemonicParsing="false" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: #4a90e2;" text="BACK" />
+      <Label layoutX="1.0" layoutY="878.0" prefHeight="25.0" prefWidth="344.0" style="-fx-font-size: 10; -fx-text-fill: gray;" text="Made By: Omar Al-Shalabi, Karem Al-Halawani, Mustabir Islam">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Button fx:id="calculateButton" layoutX="488.0" layoutY="630.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" style="-fx-font-weight: bold; -fx-background-color: #4a90e2; -fx-text-fill: white;" text="CALCULATE AVERAGE" />
+      <Label fx:id="completedInfoLabel" layoutX="1307.0" layoutY="628.0" prefHeight="30.0" prefWidth="21.0" text="ⓘ">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="backButton" layoutX="1235.0" layoutY="41.0" mnemonicParsing="false" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: #4a90e2;" text="BACK" />
    </children>
 </AnchorPane>

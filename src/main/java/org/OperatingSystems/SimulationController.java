@@ -1,17 +1,25 @@
 package org.OperatingSystems;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import static javafx.util.Duration.ZERO;
 
 public class SimulationController {
 
+    private Timeline guiUpdater;
     private Scheduler scheduler;
     // Header
     @FXML
@@ -98,18 +106,42 @@ public class SimulationController {
     private TableColumn<Process, Integer> completionTimeColumn;
 
     @FXML
+    private Button calculateButton;
+    @FXML
+    private Label completedInfoLabel;
+
+    @FXML
     public void initialize() {
+        System.out.println(completedInfoLabel);
         addProcessButton.setOnAction(event -> handlerAddProcess());
         backButton.setOnAction(event -> handlerBackButton());
         startButton.setOnAction(event -> handlerStartButton());
+        stopButton.setOnAction(event -> handlerStopButton());
+        addProcessesButton.setOnAction(event -> handlerAddProcesses());
 
 
         pidColumn.setCellValueFactory(new PropertyValueFactory<>("processId"));
         arrivalColumn.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
         burstColumn.setCellValueFactory(new PropertyValueFactory<>("burstTime"));
-        remainingColumn.setCellValueFactory(new PropertyValueFactory<>("remainingTime"));
+        remainingColumn.setCellValueFactory(new PropertyValueFactory<>("remainingBurstTime"));
         priorityColumn.setCellValueFactory(new PropertyValueFactory<>("priority"));
         stateColumn.setCellValueFactory(new PropertyValueFactory<>("state"));
+        waitingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("waitingTime"));
+        calculateButton.setOnAction(event -> handlerStatisticsButton());
+
+        completedPidColumn.setCellValueFactory(new PropertyValueFactory<>("processId"));
+        waitingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("waitingTime"));
+        turnaroundTimeColumn.setCellValueFactory(new PropertyValueFactory<>("turnaroundTime"));
+        responseTimeColumn.setCellValueFactory(new PropertyValueFactory<>("responseTime"));
+        completionTimeColumn.setCellValueFactory(new PropertyValueFactory<>("completionTime"));
+
+
+
+        Tooltip tooltip = new Tooltip("This table displays completed processes and their final metrics.");
+
+        tooltip.setShowDelay(Duration.ZERO);
+        completedInfoLabel.setTooltip(tooltip);
+
     }
 
     private void handlerAddProcess() {
@@ -189,7 +221,14 @@ public class SimulationController {
         });
 
 
-        dialog.showAndWait().ifPresent(process -> {processTable.getItems().add(process);});
+        dialog.showAndWait().ifPresent(process -> {processTable.getItems().add(process);
+
+            if (scheduler.isRunning()) {
+                scheduler.addProcess(process);
+            }
+        });
+
+
     }
 
     private void handlerStartButton() {
@@ -199,23 +238,112 @@ public class SimulationController {
             return;
         }
 
+
         scheduler.schedule(processes);
-        new Thread(() -> {
-            try {
-                Thread.sleep(5000); // temporary only
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            Platform.runLater(() -> updateGanttChart());
-        }).start();
-
-
+        startGuiUpdater();
         updateGanttChart();
+    }
+
+    private void handlerStopButton() {
+        if (scheduler != null) {
+            scheduler.stopScheduler();
+        }
+        if (guiUpdater != null) {
+            guiUpdater.stop();
+        }
+        schedulerStatusLabel.setText("Scheduler State: Stopped");
+        startButton.setDisable(false);
     }
 
     public void handlerBackButton() {
         SceneManager.showHomePage();
+    }
+    private void handlerAddProcesses() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Add Processes");
+        dialog.setHeaderText("Choose how to add multiple processes");
+
+        TextField countField = new TextField();
+        countField.setPromptText("Number of processes");
+
+        Button randomButton = new Button("Generate Random");
+        Button sampleButton = new Button("Load Sample Processes");
+
+        VBox box = new VBox(10, new Label("Number of Processes:"), countField, randomButton, sampleButton);
+        dialog.getDialogPane().setContent(box);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        randomButton.setOnAction(e -> {
+            if (countField.getText().trim().isEmpty()) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Input Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter the number of processes.");
+                alert.showAndWait();
+
+                return;
+            }
+
+            try {
+
+                int count = Integer.parseInt(countField.getText());
+                generateRandomProcesses(count);
+                dialog.close();
+
+            }
+            catch (NumberFormatException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Input Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid number.");
+                alert.showAndWait();
+            }
+        });
+
+        sampleButton.setOnAction(e -> {
+            loadSampleProcesses();
+            dialog.close();
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void handlerStatisticsButton() {
+
+        double avgWaiting = 0;
+        double avgTurnaround = 0;
+        double avgResponse = 0;
+
+        int count = completedProcessesTable.getItems().size();
+
+        if (count == 0) {
+            showAlert("No completed processes.");
+            return;
+        }
+
+        for (Process process : completedProcessesTable.getItems()) {
+            avgWaiting += process.getWaitingTime();
+            avgTurnaround += process.getTurnaroundTime();
+            avgResponse += process.getResponseTime();
+        }
+
+        avgWaiting /= count;
+        avgTurnaround /= count;
+        avgResponse /= count;
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        alert.setTitle("Simulation Statistics");
+        alert.setHeaderText("Average Metrics");
+
+        alert.setContentText(
+                "Average Waiting Time: " + avgWaiting +
+                        "\nAverage Turnaround Time: " + avgTurnaround +
+                        "\nAverage Response Time: " + avgResponse
+        );
+
+        alert.showAndWait();
     }
 
 
@@ -227,13 +355,16 @@ public class SimulationController {
     private void updateGanttChart() {
         ganttHBox.getChildren().clear();
 
-        for (String pid : scheduler.getTimeline()) {
-            Label block = new Label(pid);
-            block.setMinWidth(40);
+        List<String> timeline = scheduler.getTimeline();
+
+        for (int i = 0; i < timeline.size(); i++) {
+            Label block = new Label(i + "\n" + timeline.get(i));
+            block.setMinWidth(45);
+            block.setMinHeight(45);
+            block.setStyle("-fx-border-color: black; -fx-alignment: center;");
             ganttHBox.getChildren().add(block);
         }
     }
-
     private boolean processIDExists(int processID) {
 
         for (Process process : processTable.getItems()) {
@@ -253,4 +384,127 @@ public class SimulationController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private void startGuiUpdater() {
+
+        guiUpdater = new Timeline(
+                new KeyFrame(Duration.millis(250), event -> {
+
+                    updateGanttChart();
+                    processTable.refresh();
+                    updateCompletedProcessesTable();
+                    updateSimulationLabels();
+
+                    if (!scheduler.isRunning()) {
+                        updateGanttChart(); // final refresh
+                        guiUpdater.stop();
+                    }
+                })
+        );
+
+        guiUpdater.setCycleCount(Timeline.INDEFINITE);
+        guiUpdater.play();
+    }
+
+    private void updateSimulationLabels() {
+        currentTimeLabel.setText("Current Time: " + scheduler.getCurrentTime());
+        schedulerStatusLabel.setText("Scheduler State: " + (scheduler.isRunning() ? "Running" : "Finished"));
+        Process currentProcess = scheduler.getCurrentProcess();
+
+        if (currentProcess == null) {
+            runningProcessLabel.setText("Running Process: None");
+        } else {
+            runningProcessLabel.setText("Running Process: " + currentProcess.getProcessId());
+        }
+
+        Process next = scheduler.getNextProcess();
+        if (next == null) {
+            nextProcessLabel.setText("Next Process: None");
+        } else {
+            nextProcessLabel.setText("Next Process: " + next.getProcessId());
+        }
+
+        readyQueueLabel.setText("Ready Queue:" + scheduler.getReadyQueueNext());
+
+        completedProcessesLabel.setText("Completed Processes: " + countCompletedProcesses());
+    }
+
+    private int countCompletedProcesses() {
+
+        int count = 0;
+
+        for (Process process : processTable.getItems()) {
+            if (process.getState().equals("COMPLETED")) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private void updateCompletedProcessesTable() {
+        completedProcessesTable.getItems().clear();
+
+        for (Process process : processTable.getItems()) {
+            if ("COMPLETED".equals(process.getState())) {
+                completedProcessesTable.getItems().add(process);
+            }
+        }
+    }
+    private void loadSampleProcesses() {
+        addProcessToTable(1, 0, 3, 2);
+        addProcessToTable(2, 2, 5, 1);
+        addProcessToTable(3, 4, 4, 3);
+        addProcessToTable(4, 6, 2, 0);
+    }
+    private void addProcessToTable(int pid, int arrival, int burst, int priority) {
+        Process process = new Process();
+        process.setProcessId(pid);
+        process.setArrivalTime(arrival);
+        process.setBurstTime(burst);
+        process.setPriority(priority);
+
+        processTable.getItems().add(process);
+    }
+    private void generateRandomProcesses(int count) {
+
+        Random random = new Random();
+
+        int nextPID = getNextAvailablePID();
+
+        for (int i = 0; i < count; i++) {
+
+            Process process = new Process();
+
+            process.setProcessId(nextPID++);
+
+            process.setArrivalTime(random.nextInt(10)); // 0-9
+
+            process.setBurstTime(random.nextInt(10) + 1); // 1-10
+
+            if (scheduler instanceof ProcessSchedulerPP
+                    || scheduler instanceof ProcessSchedulerPN) {
+
+                process.setPriority(random.nextInt(5)); // 0-4
+            } else {
+
+                process.setPriority(-1);
+            }
+
+            processTable.getItems().add(process);
+        }
+    }
+
+    private int getNextAvailablePID() {
+
+        int maxPID = 0;
+
+        for (Process process : processTable.getItems()) {
+            maxPID = Math.max(maxPID, process.getProcessId());
+        }
+
+        return maxPID + 1;
+    }
+
+
 }

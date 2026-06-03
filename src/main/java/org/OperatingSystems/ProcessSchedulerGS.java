@@ -15,6 +15,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     private List<String> timeline = new ArrayList<>();
     private AtomicInteger currentTime = new AtomicInteger(0);
     private volatile boolean isRunning = false;
+    private Process currentProcess;
 
     //concurrency methods
     public void startScheduler() {
@@ -60,7 +61,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     public void run() {
         while (isRunning) {
             try {
-                Process currentProcess = readyQueue.take();
+                currentProcess = readyQueue.take();
                 currentProcess.setState("RUNNING");
 
                 if (currentProcess.getRemainingBurstTime() == currentProcess.getBurstTime()) {
@@ -117,5 +118,36 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
     public List<String> getTimeline() {
         return timeline;
     }
+    public boolean isRunning() {
+        return isRunning;
+    }
 
+    @Override
+    public AtomicInteger getCurrentTime() {
+        return currentTime;
+    }
+    @Override
+    public Process getNextProcess() {
+        return readyQueue.peek();
+    }
+    public Process getCurrentProcess() {
+        return currentProcess;
+    }
+
+    @Override
+    public String getReadyQueueNext() {
+        if (readyQueue.isEmpty()) {
+            return "Empty";
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Process process : readyQueue) {
+            builder.append("P")
+                    .append(process.getProcessId())
+                    .append(" ");
+        }
+
+        return builder.toString();
+    }
 }

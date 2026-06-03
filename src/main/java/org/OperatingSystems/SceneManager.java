@@ -23,7 +23,7 @@ public class SceneManager {
 
             Scene scene = new Scene(loader.load());
             stage.setWidth(600);
-            stage.setHeight(400);
+            stage.setHeight(450);
             stage.centerOnScreen();
             stage.setScene(scene);
         } catch (Exception e) {
