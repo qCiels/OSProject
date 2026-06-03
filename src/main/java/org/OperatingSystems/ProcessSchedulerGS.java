@@ -150,4 +150,7 @@ public class ProcessSchedulerGS implements Scheduler , Runnable {
 
         return builder.toString();
     }
+    public String getSchedulerCode() {
+        return "GS";
+    }
 }

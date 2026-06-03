@@ -31,6 +31,18 @@ public class SceneManager {
         }
     }
 
+    public static void showComparisonPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/comparison.fxml"));
+            Scene scene = new Scene(loader.load());
+            stage.setWidth(1400);
+            stage.setHeight(980);
+            stage.centerOnScreen();
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void showSimulationPage(Scheduler scheduler) {
         try {
             FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/simulation.fxml"));

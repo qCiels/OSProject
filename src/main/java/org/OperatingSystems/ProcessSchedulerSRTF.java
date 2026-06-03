@@ -145,4 +145,7 @@ public class ProcessSchedulerSRTF implements Scheduler, Runnable {
 
         return builder.toString();
     }
+    public String getSchedulerCode() {
+        return "SRTF";
+    }
 }

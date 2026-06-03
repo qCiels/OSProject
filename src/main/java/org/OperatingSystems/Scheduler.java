@@ -16,5 +16,5 @@ public interface Scheduler {
     Process getCurrentProcess();
     String getReadyQueueNext();
     void stopScheduler();
-
+    String getSchedulerCode();
 }

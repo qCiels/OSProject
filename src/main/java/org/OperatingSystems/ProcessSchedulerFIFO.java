@@ -127,4 +127,7 @@ public class ProcessSchedulerFIFO implements Scheduler , Runnable {
 
             return builder.toString();
         }
+    public String getSchedulerCode() {
+        return "FIFO";
+    }
 }

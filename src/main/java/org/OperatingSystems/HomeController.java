@@ -19,6 +19,9 @@ public class HomeController {
     @FXML
     private Button startButton;
 
+    @FXML
+    private Button compareScheduleButton;
+
 
     @FXML
     public void initialize() {
@@ -28,6 +31,9 @@ public class HomeController {
         schedulerComboBox.setOnAction(event -> handlerSchedulerSelection());
 
         startButton.setOnAction(event -> handlerStartButton());
+
+        compareScheduleButton.setOnAction(event -> SceneManager.showComparisonPage());
+
     }
 
     public void handlerSchedulerSelection() {

@@ -128,4 +128,7 @@ public class ProcessSchedulerSJF implements Scheduler , Runnable {
 
         return builder.toString();
     }
+    public String getSchedulerCode() {
+        return "SJF";
+    }
 }

@@ -148,4 +148,7 @@ public class ProcessSchedulerPN implements Scheduler, Runnable {
 
         return builder.toString();
     }
+    public String getSchedulerCode() {
+        return "PN";
+    }
 }

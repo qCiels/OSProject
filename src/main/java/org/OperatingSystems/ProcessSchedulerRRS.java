@@ -156,5 +156,8 @@ public class ProcessSchedulerRRS implements Scheduler , Runnable {
 
         return builder.toString();
     }
+    public String getSchedulerCode() {
+        return "RRS";
+    }
 
 }
