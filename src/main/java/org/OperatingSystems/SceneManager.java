@@ -2,16 +2,28 @@ package org.OperatingSystems;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class SceneManager {
 
     private static Stage stage;
 
-    public static void setStage(Stage Primarystage) {
-       stage = Primarystage;
-       stage.setTitle("OS Project - Omar Al-Shalabi, Karem Al-Halawani, Mustabir Islam");
-       stage.getIcons().add(new javafx.scene.image.Image("/images/Abu_Dhabi_University.png"));
+    public static void setStage(Stage primaryStage) {
+
+        stage = primaryStage;
+
+        stage.setTitle(
+                "OS Project - Omar Al-Shalabi, Karem Al-Halawani, Mustabir Islam"
+        );
+
+        var iconStream = SceneManager.class.getResourceAsStream(
+                "/images/Abu_Dhabi_University.png"
+        );
+
+        if (iconStream != null) {
+            stage.getIcons().add(new Image(iconStream));
+        }
     }
 
     public static Stage getStage() {
